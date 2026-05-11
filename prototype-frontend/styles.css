@@ -980,21 +980,31 @@ textarea {
 }
 
 body.is-auth .bottom-nav,
-body.is-auth .floating-add {
+body.is-auth .floating-add,
+body.is-auth .app-header,
+body.is-auth .search-wrapper,
+body.is-auth .desktop-context,
+body.is-auth .menu-popover {
   display: none;
 }
 
 body.is-auth .app-shell {
-  padding-bottom: 24px;
+  min-height: 100vh;
+  padding: 24px var(--space-page);
 }
 
 body.is-auth .screen-content {
+  width: min(100%, 920px);
+  margin: 0 auto;
+  padding-top: 0;
   padding-bottom: 24px;
 }
 
 .auth-screen {
   display: grid;
   gap: 18px;
+  min-height: calc(100vh - 72px);
+  align-content: center;
 }
 
 .auth-art {
@@ -1255,12 +1265,33 @@ dialog::backdrop {
   }
 
   body.is-auth .app-shell {
-    grid-template-columns: minmax(0, 620px) 280px;
-    max-width: 960px;
+    display: grid;
+    grid-template-columns: minmax(0, 920px);
+    place-content: center;
+    max-width: none;
   }
 
   body.is-auth .desktop-rail {
     display: none;
+  }
+
+  body.is-auth .main-surface {
+    width: min(100%, 920px);
+  }
+
+  .auth-screen {
+    grid-template-columns: minmax(260px, 0.8fr) minmax(320px, 1fr);
+    align-items: center;
+  }
+
+  .auth-art,
+  .auth-copy {
+    grid-column: 1;
+  }
+
+  .auth-panel {
+    grid-column: 2;
+    grid-row: 1 / span 2;
   }
 
   .brand-lockup,
