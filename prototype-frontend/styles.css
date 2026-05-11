@@ -937,6 +937,16 @@ textarea {
   font-size: 0.92rem;
 }
 
+.profile-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.profile-logout {
+  width: min(100%, 180px);
+}
+
 .history-top {
   display: flex;
   align-items: center;
