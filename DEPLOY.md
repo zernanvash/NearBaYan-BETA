@@ -14,29 +14,30 @@ We will use two industry-standard free platforms for hackathons:
 2. Click **New +** and select **Web Service**.
 3. Connect your `SikapatalaHackathon` GitHub repository.
 4. Fill out the configuration:
-   - **Branch:** `main` (which contains your beta1 code)
+   - **Branch:** `main`
    - **Build Command:** `npm install`
    - **Start Command:** `npm start`
-5. Scroll down to **Environment Variables** and add exactly what you have in your local `.env`:
+5. Scroll down to **Environment Variables** and add your production values:
+   - `NODE_ENV` : `production`
    - `MONGO_URI` : *(Your MongoDB Atlas URL)*
    - `JWT_SECRET` : `any_random_long_string_here`
-   - `NVIDIA_API_KEY` : `nvapi-...` (your actual key)
-   - `NVIDIA_BASE_URL` : `https://integrate.api.nvidia.com/v1/chat/completions`
-   - `NVIDIA_SAFETY_MODEL` : `nvidia/llama-3.1-nemotron-safety-guard-8b-v3`
+   - `JWT_EXPIRES_IN` : `7d`
+   - `CLIENT_URLS` : `https://near-ba-yan-beta.vercel.app`
+   - `OPENAI_API_KEY` : *(optional, if AI features are enabled)*
 6. Click **Create Web Service**. 
 
-*(Once it finishes deploying, Render will give you a live URL like `https://nearbayan-backend.onrender.com`. Copy this URL!)*
+The current backend URL is `https://nearbayan-beta.onrender.com`.
 
 ---
 
 ## Phase 2: Connecting the Frontend
 
-Once you have your Render Backend URL, you must update your code to connect to it.
+The frontend is already configured to call the Render backend.
 
-1. Open `beta1/prototype-frontend/index.html`.
+1. Open `prototype-frontend/index.html`.
 2. Find the meta tag at line 6:
-   `<meta name="nearbayan-api-base" content="http://localhost:5000" />`
-3. Replace `http://localhost:5000` with your new Render URL (e.g., `https://nearbayan-backend.onrender.com`).
+   `<meta name="nearbayan-api-base" content="https://nearbayan-beta.onrender.com" />`
+3. If the backend URL changes later, replace `https://nearbayan-beta.onrender.com` with the new Render URL.
 4. Commit and push this change to your GitHub repository.
 
 ---
@@ -46,7 +47,7 @@ Once you have your Render Backend URL, you must update your code to connect to i
 1. Go to **Vercel.com** and sign in with GitHub.
 2. Click **Add New...** -> **Project**.
 3. Import your `SikapatalaHackathon` GitHub repository.
-4. Click **Edit** next to the Root Directory, and change it to `beta1/prototype-frontend` (or just `prototype-frontend` depending on how your repo is structured).
+4. Click **Edit** next to the Root Directory, and change it to `prototype-frontend`.
 5. Click **Deploy**.
 
-Vercel will immediately give you a live URL (like `https://nearbayan.vercel.app`). You can open this on any phone or computer anywhere in the world!
+The current frontend URL is `https://near-ba-yan-beta.vercel.app/`. You can open this on any phone or computer anywhere in the world.
