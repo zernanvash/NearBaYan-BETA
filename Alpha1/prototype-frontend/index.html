@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NearBaYan Prototype</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">NB</div>
+          <div>
+            <strong>NearBaYan</strong>
+            <span>Ask nearby. Help safely.</span>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="Main navigation">
+          <button class="active" data-view="feed" type="button">Home</button>
+          <button data-view="connections" type="button">Connected</button>
+          <button data-view="profile" type="button">Profile</button>
+          <button data-view="api" type="button">API</button>
+        </nav>
+
+        <div class="status-panel">
+          <span class="status-dot" id="statusDot"></span>
+          <div>
+            <strong id="statusText">Checking backend</strong>
+            <span id="statusMeta">localhost:5000</span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Calasiao area</p>
+            <h1 id="pageTitle">Community feed</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button" id="refreshHealth" type="button" aria-label="Refresh backend status" title="Refresh backend status">R</button>
+            <button class="icon-button has-badge" id="toggleNotifications" type="button" aria-label="Open notifications" title="Notifications">N</button>
+            <button class="primary-action" id="openComposer" type="button">Create post</button>
+          </div>
+        </header>
+
+        <section class="hero-card" aria-label="Nearby summary">
+          <div>
+            <p class="eyebrow">Within 1.2 km</p>
+            <strong>Find help, report lost items, and connect safely.</strong>
+          </div>
+          <span>Live</span>
+        </section>
+
+        <section class="quick-stats" aria-label="Community summary">
+          <div>
+            <span>Open posts</span>
+            <strong id="openCount">0</strong>
+          </div>
+          <div>
+            <span>Applicants waiting</span>
+            <strong id="applicantCount">0</strong>
+          </div>
+          <div>
+            <span>Connections</span>
+            <strong id="connectionCount">0</strong>
+          </div>
+        </section>
+
+        <section class="filters" id="feedFilters" aria-label="Feed filters">
+          <button class="active" data-filter="all" type="button">All</button>
+          <button data-filter="favor" type="button">Favors</button>
+          <button data-filter="errand" type="button">Errands</button>
+          <button data-filter="question" type="button">Questions</button>
+          <button data-filter="lost" type="button">Lost</button>
+          <button data-filter="found" type="button">Found</button>
+          <button data-filter="mine" type="button">My posts</button>
+        </section>
+
+        <section class="main-content" id="mainContent" aria-live="polite"></section>
+      </main>
+
+      <aside class="notifications" id="notificationsPanel" aria-label="Notifications">
+        <header>
+          <div>
+            <p class="eyebrow">Updates</p>
+            <h2>Notifications</h2>
+          </div>
+          <button class="icon-button" id="closeNotifications" type="button" aria-label="Close notifications" title="Close">X</button>
+        </header>
+        <div id="notificationList"></div>
+      </aside>
+    </div>
+
+    <dialog id="composer">
+      <form method="dialog" class="composer">
+        <header>
+          <h2>Draft community post</h2>
+          <button class="icon-button" value="cancel" type="submit" aria-label="Close composer" title="Close">X</button>
+        </header>
+        <label>
+          Type
+          <select id="draftType">
+            <option value="errand">Errand</option>
+            <option value="favor">Favor</option>
+            <option value="question">Question</option>
+            <option value="lost">Lost item</option>
+            <option value="found">Found item</option>
+          </select>
+        </label>
+        <label>
+          Title
+          <input id="draftTitle" value="Can someone check if the printing shop is open?" />
+        </label>
+        <label>
+          Description
+          <textarea id="draftDescription">Need a quick update near Gate 2. Will tip if someone is already nearby.</textarea>
+        </label>
+        <label>
+          Location
+          <input id="draftLocation" value="Gate 2" />
+        </label>
+        <button class="primary-action" id="addDraftPost" value="default" type="submit">Add to prototype feed</button>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>

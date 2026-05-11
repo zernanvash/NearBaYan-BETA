@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NearBaYan Prototype</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="desktop-rail">
+        <div class="brand-lockup">
+          <div class="brand-pin mini-logo" aria-hidden="true">
+            <span class="handshake">⌁</span>
+          </div>
+          <div>
+            <strong>NearBaYan</strong>
+            <span>Bringing bayanihan closer.</span>
+          </div>
+        </div>
+
+        <nav class="rail-nav" aria-label="Main navigation">
+          <button class="active" data-view="home" type="button">Dashboard</button>
+          <button data-view="requests" type="button">Requests</button>
+          <button data-view="questions" type="button">Questions</button>
+          <button data-view="items" type="button">Items</button>
+          <button data-view="lost" type="button">Lost and Found</button>
+          <button data-view="profile" type="button">Profile</button>
+        </nav>
+
+        <div class="rail-status">
+          <span class="status-dot" id="statusDot"></span>
+          <div>
+            <strong id="statusText">Checking backend</strong>
+            <span id="statusMeta">localhost:5000</span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="phone-surface">
+        <header class="app-header">
+          <div class="wordmark">
+            <div class="brand-pin small" aria-hidden="true">
+              <span class="handshake">⌁</span>
+            </div>
+            <strong>Near<span>Ba</span>Yan</strong>
+          </div>
+          <button class="menu-button" id="menuButton" type="button" aria-label="Open menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </header>
+
+        <form class="search-bar" role="search">
+          <span class="search-icon" aria-hidden="true"></span>
+          <input type="search" placeholder="Search" aria-label="Search NearBaYan" />
+          <button class="filter-button" type="button" aria-label="Filter results">
+            <span></span>
+          </button>
+        </form>
+
+        <section class="menu-popover" id="menuPopover" aria-label="Menu">
+          <button class="active" data-view="home" type="button"><span class="menu-icon grid"></span>Dashboard</button>
+          <button data-view="requests" type="button"><span class="menu-icon note"></span>Requests</button>
+          <button data-view="questions" type="button"><span class="menu-icon question"></span>Questions</button>
+          <button data-view="items" type="button"><span class="menu-icon cart"></span>Items</button>
+          <button data-view="lost" type="button"><span class="menu-icon lost"></span>Lost and Found</button>
+        </section>
+
+        <section class="screen-content" id="screenContent" aria-live="polite"></section>
+      </main>
+
+      <aside class="desktop-context" id="desktopContext" aria-label="Nearby summary"></aside>
+    </div>
+
+    <nav class="bottom-nav" aria-label="Quick navigation">
+      <button class="active" data-view="home" type="button"><span class="home-icon"></span>Home</button>
+      <button data-view="messages" type="button" aria-label="Messages"><span class="chat-icon"></span></button>
+      <button data-view="alerts" type="button" aria-label="Notifications"><span class="bell-icon"></span><i>1</i></button>
+      <button data-view="profile" type="button" aria-label="Profile"><span class="person-icon"></span></button>
+    </nav>
+
+    <button class="floating-add" id="floatingAdd" type="button" aria-label="Create new post"></button>
+
+    <dialog id="composer">
+      <form method="dialog" class="composer">
+        <header>
+          <button class="back-button" value="cancel" type="submit" aria-label="Close"></button>
+          <h2>Create Request</h2>
+        </header>
+        <label>
+          Request Title
+          <input id="draftTitle" placeholder="Brief title for your request" />
+        </label>
+        <label>
+          Detailed Description
+          <textarea id="draftDescription" placeholder="Provide details about your request"></textarea>
+        </label>
+        <label>
+          Category
+          <select id="draftType">
+            <option value="request">Request</option>
+            <option value="question">Question</option>
+            <option value="item">Item</option>
+            <option value="lost">Lost and Found</option>
+          </select>
+        </label>
+        <label>
+          Offered Payment
+          <input id="draftPayment" placeholder="₱0" />
+        </label>
+        <label>
+          Preferred Deadline
+          <input id="draftDeadline" placeholder="mm / dd / yyyy" />
+        </label>
+        <footer>
+          <button class="secondary-action" value="cancel" type="submit">Cancel</button>
+          <button class="primary-action" id="addDraftPost" value="default" type="submit">Submit</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <template id="sceneTemplate">
+      <div class="scene-placeholder" aria-label="Image placeholder">
+        <span class="cloud cloud-one"></span>
+        <span class="cloud cloud-two"></span>
+        <span class="cloud cloud-three"></span>
+        <span class="hill hill-one"></span>
+        <span class="hill hill-two"></span>
+      </div>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
