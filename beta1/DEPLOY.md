@@ -1,83 +1,52 @@
-# NearBaYan Beta Deployment
+# NearBaYan Beta Deployment Guide
 
-## What To Deploy
+To use this app outside of `localhost` (e.g., on your phone or sharing with judges), you need to host it on the internet. Because your code is already pushed to GitHub, deployment will be surprisingly fast and completely free!
 
-NearBaYan Beta has two deployable pieces:
+We will use two industry-standard free platforms for hackathons:
+1. **Render.com** (for your Node.js Backend)
+2. **Vercel.com** (for your Frontend)
 
-- Backend API: repo root, starts with `npm start`
-- Prototype frontend: `prototype-frontend/`, static Node server starts with `npm run frontend`
+---
 
-For public mobile testing, deploy the backend first, then point the frontend API meta tag to the deployed backend URL.
+## Phase 1: Deploy the Backend (Render.com)
 
-## Backend
+1. Go to **Render.com** and sign in with GitHub.
+2. Click **New +** and select **Web Service**.
+3. Connect your `SikapatalaHackathon` GitHub repository.
+4. Fill out the configuration:
+   - **Branch:** `main` (which contains your beta1 code)
+   - **Build Command:** `npm install`
+   - **Start Command:** `npm start`
+5. Scroll down to **Environment Variables** and add exactly what you have in your local `.env`:
+   - `MONGO_URI` : *(Your MongoDB Atlas URL)*
+   - `JWT_SECRET` : `any_random_long_string_here`
+   - `NVIDIA_API_KEY` : `nvapi-...` (your actual key)
+   - `NVIDIA_BASE_URL` : `https://integrate.api.nvidia.com/v1/chat/completions`
+   - `NVIDIA_SAFETY_MODEL` : `nvidia/llama-3.1-nemotron-safety-guard-8b-v3`
+6. Click **Create Web Service**. 
 
-Recommended quick hosts: Render, Railway, Fly.io, or any Node 18+ VPS.
+*(Once it finishes deploying, Render will give you a live URL like `https://nearbayan-backend.onrender.com`. Copy this URL!)*
 
-Build command:
+---
 
-```bash
-npm install
-```
+## Phase 2: Connecting the Frontend
 
-Start command:
+Once you have your Render Backend URL, you must update your code to connect to it.
 
-```bash
-npm start
-```
+1. Open `beta1/prototype-frontend/index.html`.
+2. Find the meta tag at line 6:
+   `<meta name="nearbayan-api-base" content="http://localhost:5000" />`
+3. Replace `http://localhost:5000` with your new Render URL (e.g., `https://nearbayan-backend.onrender.com`).
+4. Commit and push this change to your GitHub repository.
 
-Required production environment:
+---
 
-```bash
-NODE_ENV=production
-MONGO_URI=mongodb+srv://USER:PASSWORD@CLUSTER/nearBaYan?retryWrites=true&w=majority
-JWT_SECRET=replace_with_a_long_random_production_secret
-JWT_EXPIRES_IN=7d
-CLIENT_URLS=https://your-frontend-domain.example.com
-```
+## Phase 3: Deploy the Frontend (Vercel.com)
 
-Health check:
+1. Go to **Vercel.com** and sign in with GitHub.
+2. Click **Add New...** -> **Project**.
+3. Import your `SikapatalaHackathon` GitHub repository.
+4. Click **Edit** next to the Root Directory, and change it to `beta1/prototype-frontend` (or just `prototype-frontend` depending on how your repo is structured).
+5. Click **Deploy**.
 
-```bash
-GET https://your-backend-domain.example.com/health
-```
-
-## Frontend
-
-Before deploying, edit `prototype-frontend/index.html`:
-
-```html
-<meta name="nearbayan-api-base" content="https://your-backend-domain.example.com" />
-```
-
-Deploy options:
-
-- Static host: Netlify, Vercel, GitHub Pages
-- Node static server: `npm run frontend`
-
-If using the Node static server, set:
-
-```bash
-FRONTEND_PORT=3000
-```
-
-## Mobile Test Checklist
-
-1. Open the frontend URL on a phone.
-2. Create a new account from Register.
-3. Sign out, then sign in with that account.
-4. Create one request, one question, one item, and one lost/found report.
-5. Confirm the backend health indicator says online.
-6. In MongoDB, confirm `users`, `posts`, `items`, and `lostfounds` collections receive records.
-
-## Local Beta Smoke Test
-
-```bash
-npm run dev:memory
-npm run frontend
-```
-
-Open:
-
-```text
-http://localhost:3003
-```
+Vercel will immediately give you a live URL (like `https://nearbayan.vercel.app`). You can open this on any phone or computer anywhere in the world!
