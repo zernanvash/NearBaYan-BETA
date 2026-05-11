@@ -1,7 +1,7 @@
 const API_BASE = document
   .querySelector('meta[name="nearbayan-api-base"]')
   ?.getAttribute("content")
-  ?.trim() || "http://localhost:5000";
+  ?.trim() || "https://nearbayan-beta.onrender.com";
 
 const AUTH_STORAGE_KEY = "nearbayan_session";
 
