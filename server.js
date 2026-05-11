@@ -1,4 +1,6 @@
 require("dotenv").config();
+const dns = require("dns");
+dns.setServers(["8.8.8.8"]); // Fix for MongoDB SRV DNS lookup issues on some networks
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");

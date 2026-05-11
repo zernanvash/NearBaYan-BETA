@@ -2,6 +2,60 @@
  * Privacy filter middleware and utilities.
  * Strips or flags sensitive information before content is served publicly.
  */
+const { OpenAI } = require("openai");
+
+let openaiClient = null;
+try {
+  if (process.env.NVIDIA_API_KEY) {
+    let baseUrl = process.env.NVIDIA_BASE_URL || "https://integrate.api.nvidia.com/v1";
+    if (baseUrl.endsWith('/chat/completions')) {
+      baseUrl = baseUrl.replace(/\/chat\/completions$/, '');
+    }
+    openaiClient = new OpenAI({
+      apiKey: process.env.NVIDIA_API_KEY,
+      baseURL: baseUrl,
+    });
+  }
+} catch (err) {
+  console.error("Failed to initialize NVIDIA NIM OpenAI client:", err);
+}
+
+async function aiModerateContent(text) {
+  if (!openaiClient || !text) return { isFlagged: false, reasons: [] };
+  try {
+    const response = await openaiClient.chat.completions.create({
+      model: process.env.NVIDIA_SAFETY_MODEL || "nvidia/llama-3.1-nemotron-safety-guard-8b-v3",
+      messages: [
+        { role: "user", content: text }
+      ],
+      temperature: 0.1,
+      max_tokens: 50,
+    });
+    
+    const outputText = response.choices[0]?.message?.content?.trim() || "";
+    
+    // Nemotron Safety Guard returns a JSON string
+    try {
+      const parsed = JSON.parse(outputText);
+      if (parsed["User Safety"] === "unsafe" || parsed["User Prompt Safety"] === "unsafe") {
+        return { 
+          isFlagged: true, 
+          reasons: [parsed["Safety Categories"] || "Unsafe content detected"] 
+        };
+      }
+    } catch (parseError) {
+      // Fallback in case it doesn't return strictly JSON
+      if (outputText.toLowerCase().includes("unsafe")) {
+         return { isFlagged: true, reasons: ["AI detected unsafe language"] };
+      }
+    }
+    
+    return { isFlagged: false, reasons: [] };
+  } catch (error) {
+    console.error("AI Moderation Error:", error);
+    return { isFlagged: false, reasons: [] };
+  }
+}
 
 // Patterns for common PH-context sensitive data
 const SENSITIVE_PATTERNS = [
@@ -78,7 +132,7 @@ function detectScamPatterns(text) {
  * Runs full moderation check on a post before saving.
  * Returns { shouldFlag: boolean, shouldBlock: boolean, reasons: string[] }
  */
-function moderateContent(fields = {}) {
+async function moderateContent(fields = {}) {
   const reasons = [];
   let shouldBlock = false;
 
@@ -110,6 +164,15 @@ function moderateContent(fields = {}) {
     shouldBlock = true;
   }
 
+  // --- AI Moderation via NVIDIA NIM ---
+  if (!shouldBlock && allText.length > 10) {
+    const aiResult = await aiModerateContent(allText);
+    if (aiResult.isFlagged) {
+      reasons.push(`AI Moderation Flag: ${aiResult.reasons[0]}`);
+      shouldBlock = true; 
+    }
+  }
+
   return {
     shouldFlag: reasons.length > 0,
     shouldBlock,
@@ -121,19 +184,24 @@ function moderateContent(fields = {}) {
  * Express middleware — runs moderation on req.body before route handler.
  * Attaches moderation result to req.moderation.
  */
-function moderationMiddleware(req, res, next) {
-  const result = moderateContent(req.body);
+async function moderationMiddleware(req, res, next) {
+  try {
+    const result = await moderateContent(req.body);
 
-  if (result.shouldBlock) {
-    return res.status(400).json({
-      success: false,
-      message: "Post contains content that violates community guidelines.",
-      reasons: result.reasons,
-    });
+    if (result.shouldBlock) {
+      return res.status(400).json({
+        success: false,
+        message: "Post contains content that violates community guidelines.",
+        reasons: result.reasons,
+      });
+    }
+
+    req.moderation = result; // attach for route handler to decide on flagging
+    next();
+  } catch (error) {
+    console.error("Moderation middleware error:", error);
+    next();
   }
-
-  req.moderation = result; // attach for route handler to decide on flagging
-  next();
 }
 
 module.exports = {
