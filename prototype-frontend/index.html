@@ -1,190 +1,202 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="nearbayan-api-base" content="https://nearbayan-beta.onrender.com" />
-    <meta name="description" content="NearBaYan — Bringing bayanihan closer. Post requests, questions, items, and lost-and-found listings in your community." />
-    <title>NearBaYan — Community Help Platform</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/png" href="assets/.LOGO/LOGO.png" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div class="app-shell" id="appShell">
 
-      <!-- Desktop left rail (hidden on mobile) -->
-      <aside class="desktop-rail" id="desktopRail" aria-label="Sidebar navigation">
-        <div class="brand-lockup">
-          <img class="brand-logo" src="assets/.LOGO/LOGO.png" alt="" />
-          <div>
-            <img class="brand-text" src="assets/.LOGO/TEXT.png" alt="NearBaYan" />
-            <span>Bringing bayanihan closer.</span>
-          </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="nearbayan-api-base" content="http://localhost:3003" />
+  <meta name="description"
+    content="NearBaYan — Bringing bayanihan closer. Post requests, questions, items, and lost-and-found listings in your community." />
+  <title>NearBaYan — Community Help Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link rel="icon" type="image/png" href="assets/.LOGO/LOGO.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app-shell" id="appShell">
+
+    <!-- Desktop left rail (hidden on mobile) -->
+    <aside class="desktop-rail" id="desktopRail" aria-label="Sidebar navigation">
+      <div class="brand-lockup">
+        <img class="brand-logo" src="assets/.LOGO/LOGO.png" alt="" />
+        <div>
+          <img class="brand-text" src="assets/.LOGO/TEXT.png" alt="NearBaYan" />
+          <span>Bringing bayanihan closer.</span>
         </div>
+      </div>
 
-        <nav class="rail-nav" aria-label="Main navigation">
-          <button class="active" data-view="home" type="button" id="rail-home">
-            <span class="menu-icon grid" aria-hidden="true"></span>Dashboard
-          </button>
-          <button data-view="requests" type="button" id="rail-requests">
-            <span class="menu-icon note" aria-hidden="true"></span>Requests
-          </button>
-          <button data-view="questions" type="button" id="rail-questions">
-            <span class="menu-icon question" aria-hidden="true"></span>Questions
-          </button>
-          <button data-view="items" type="button" id="rail-items">
-            <span class="menu-icon cart" aria-hidden="true"></span>Items
-          </button>
-          <button data-view="lost" type="button" id="rail-lost">
-            <span class="menu-icon lost" aria-hidden="true"></span>Lost &amp; Found
-          </button>
-          <button data-view="profile" type="button" id="rail-profile">
-            <span class="menu-icon person" aria-hidden="true"></span>Profile
-          </button>
-        </nav>
+      <nav class="rail-nav" aria-label="Main navigation">
+        <button class="active" data-view="home" type="button" id="rail-home">
+          <span class="menu-icon grid" aria-hidden="true"></span>Dashboard
+        </button>
+        <button data-view="requests" type="button" id="rail-requests">
+          <span class="menu-icon note" aria-hidden="true"></span>Requests
+        </button>
+        <button data-view="questions" type="button" id="rail-questions">
+          <span class="menu-icon question" aria-hidden="true"></span>Questions
+        </button>
+        <button data-view="items" type="button" id="rail-items">
+          <span class="menu-icon cart" aria-hidden="true"></span>Items
+        </button>
+        <button data-view="lost" type="button" id="rail-lost">
+          <span class="menu-icon lost" aria-hidden="true"></span>Lost &amp; Found
+        </button>
+        <button data-view="profile" type="button" id="rail-profile">
+          <span class="menu-icon person" aria-hidden="true"></span>Profile
+        </button>
+      </nav>
 
-        <div class="rail-status" aria-live="polite">
-          <span class="status-dot" id="statusDot" aria-hidden="true"></span>
-          <div>
-            <strong id="statusText">Checking backend</strong>
-            <span id="statusMeta">localhost:5000</span>
-          </div>
+      <div class="rail-status" aria-live="polite">
+        <span class="status-dot" id="statusDot" aria-hidden="true"></span>
+        <div>
+          <strong id="statusText">Checking backend</strong>
+          <span id="statusMeta">localhost:5000</span>
         </div>
-      </aside>
+      </div>
+    </aside>
 
-      <!-- Main content area -->
-      <main class="main-surface" id="mainSurface">
-        <!-- Mobile-only sticky header -->
-        <header class="app-header" id="appHeader">
-          <div class="wordmark">
-            <img class="wordmark-logo" src="assets/.LOGO/LOGO.png" alt="" />
-            <img class="wordmark-text" src="assets/.LOGO/TEXT.png" alt="NearBaYan" />
-          </div>
-          <div class="header-actions">
-            <button class="icon-btn notif-btn" data-view="alerts" type="button" aria-label="Notifications">
-              <span class="bell-icon nav-asset" aria-hidden="true"></span>
-              <i class="badge" aria-label="1 notification">1</i>
-            </button>
-            <button class="icon-btn menu-button" id="menuButton" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menuPopover"></button>
-          </div>
-        </header>
+    <!-- Main content area -->
+    <main class="main-surface" id="mainSurface">
+      <!-- Mobile-only sticky header -->
+      <header class="app-header" id="appHeader">
+        <div class="wordmark">
+          <img class="wordmark-logo" src="assets/.LOGO/LOGO.png" alt="" />
+          <img class="wordmark-text" src="assets/.LOGO/TEXT.png" alt="NearBaYan" />
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn notif-btn" data-view="alerts" type="button" aria-label="Notifications">
+            <span class="bell-icon nav-asset" aria-hidden="true"></span>
+            <i class="badge" aria-label="1 notification">1</i>
+          </button>
+          <button class="icon-btn menu-button" id="menuButton" type="button" aria-label="Open menu"
+            aria-expanded="false" aria-controls="menuPopover"></button>
+        </div>
+      </header>
 
-        <!-- Search bar -->
-        <div class="search-wrapper">
-          <form class="search-bar" role="search">
+      <!-- Search bar -->
+      <div class="search-wrapper">
+          <div class="search-bar" role="search">
             <span class="search-icon asset-icon" aria-hidden="true"></span>
             <input type="search" placeholder="Search NearBaYan…" aria-label="Search NearBaYan" id="searchInput" />
             <button class="filter-button image-button" type="button" aria-label="Filter results"></button>
-          </form>
-        </div>
-
-        <!-- Mobile menu popover -->
-        <nav class="menu-popover" id="menuPopover" aria-label="Menu navigation" hidden>
-          <button class="active" data-view="home" type="button"><span class="menu-icon grid" aria-hidden="true"></span>Dashboard</button>
-          <button data-view="requests" type="button"><span class="menu-icon note" aria-hidden="true"></span>Requests</button>
-          <button data-view="questions" type="button"><span class="menu-icon question" aria-hidden="true"></span>Questions</button>
-          <button data-view="items" type="button"><span class="menu-icon cart" aria-hidden="true"></span>Items</button>
-          <button data-view="lost" type="button"><span class="menu-icon lost" aria-hidden="true"></span>Lost &amp; Found</button>
-          <button data-view="profile" type="button"><span class="menu-icon person" aria-hidden="true"></span>Profile</button>
-        </nav>
-
-        <!-- Dynamic view content -->
-        <section class="screen-content" id="screenContent" aria-live="polite" aria-atomic="false"></section>
-      </main>
-
-      <!-- Desktop right context panel (hidden on mobile) -->
-      <aside class="desktop-context" id="desktopContext" aria-label="Nearby summary"></aside>
-
-      <!-- Mobile bottom navigation -->
-      <nav class="bottom-nav" id="bottomNav" aria-label="Quick navigation">
-        <button class="active" data-view="home" type="button" id="bnav-home" aria-current="page">
-          <span class="home-icon nav-asset" aria-hidden="true"></span>
-          <span class="bnav-label">Home</span>
-        </button>
-        <button data-view="messages" type="button" id="bnav-messages" aria-label="Messages">
-          <span class="chat-icon nav-asset" aria-hidden="true"></span>
-          <span class="bnav-label">Messages</span>
-        </button>
-        <button data-view="alerts" type="button" id="bnav-alerts" aria-label="Notifications">
-          <span class="bell-icon nav-asset" aria-hidden="true"></span>
-          <i class="badge" aria-label="1 notification">1</i>
-          <span class="bnav-label">Alerts</span>
-        </button>
-        <button data-view="profile" type="button" id="bnav-profile" aria-label="Profile">
-          <span class="person-icon nav-asset" aria-hidden="true"></span>
-          <span class="bnav-label">Profile</span>
-        </button>
-      </nav>
-    </div><!-- /app-shell -->
-
-    <!-- Floating action button -->
-    <button class="floating-add" id="floatingAdd" type="button" aria-label="Create new post">
-      <span aria-hidden="true">+</span>
-    </button>
-
-    <!-- Composer dialog -->
-    <dialog id="composer" aria-label="Create a new post" aria-modal="true">
-      <form method="dialog" class="composer-form" id="composerForm">
-        <header class="composer-header">
-          <button class="back-button image-button" value="cancel" type="submit" aria-label="Close dialog"></button>
-          <h2>Create Post</h2>
-          <div></div>
-        </header>
-
-        <div class="composer-body">
-          <label class="field-group">
-            <span class="field-label">Post Title</span>
-            <input id="draftTitle" placeholder="Brief title for your post…" autocomplete="off" />
-          </label>
-
-          <label class="field-group">
-            <span class="field-label">Description</span>
-            <textarea id="draftDescription" placeholder="Provide details about your post…" rows="5"></textarea>
-          </label>
-
-          <label class="field-group">
-            <span class="field-label">Category</span>
-            <select id="draftType">
-              <option value="request">Request</option>
-              <option value="question">Question</option>
-              <option value="item">Item</option>
-              <option value="lost">Lost &amp; Found</option>
-            </select>
-          </label>
-
-          <div class="field-row">
-            <label class="field-group">
-              <span class="field-label">Payment (optional)</span>
-              <input id="draftPayment" placeholder="PHP 0" />
-            </label>
-            <label class="field-group">
-              <span class="field-label">Deadline</span>
-              <input id="draftDeadline" type="date" />
-            </label>
           </div>
-        </div>
+      </div>
 
-        <footer class="composer-footer">
-          <button class="btn btn-secondary" value="cancel" type="submit">Cancel</button>
-          <button class="btn btn-primary" id="addDraftPost" value="default" type="submit">Post</button>
-        </footer>
-      </form>
+      <!-- Mobile menu popover -->
+      <nav class="menu-popover" id="menuPopover" aria-label="Menu navigation" hidden>
+        <button class="active" data-view="home" type="button"><span class="menu-icon grid"
+            aria-hidden="true"></span>Dashboard</button>
+        <button data-view="requests" type="button"><span class="menu-icon note"
+            aria-hidden="true"></span>Requests</button>
+        <button data-view="questions" type="button"><span class="menu-icon question"
+            aria-hidden="true"></span>Questions</button>
+        <button data-view="items" type="button"><span class="menu-icon cart" aria-hidden="true"></span>Items</button>
+        <button data-view="lost" type="button"><span class="menu-icon lost" aria-hidden="true"></span>Lost &amp;
+          Found</button>
+        <button data-view="profile" type="button"><span class="menu-icon person"
+            aria-hidden="true"></span>Profile</button>
+      </nav>
+
+      <!-- Dynamic view content -->
+      <section class="screen-content" id="screenContent" aria-live="polite" aria-atomic="false"></section>
+    </main>
+
+    <!-- Desktop right context panel (hidden on mobile) -->
+    <aside class="desktop-context" id="desktopContext" aria-label="Nearby summary"></aside>
+
+    <!-- Mobile bottom navigation -->
+    <nav class="bottom-nav" id="bottomNav" aria-label="Quick navigation">
+      <button class="active" data-view="home" type="button" id="bnav-home" aria-current="page">
+        <span class="home-icon nav-asset" aria-hidden="true"></span>
+        <span class="bnav-label">Home</span>
+      </button>
+      <button data-view="messages" type="button" id="bnav-messages" aria-label="Messages">
+        <span class="chat-icon nav-asset" aria-hidden="true"></span>
+        <span class="bnav-label">Messages</span>
+      </button>
+      <button data-view="alerts" type="button" id="bnav-alerts" aria-label="Notifications">
+        <span class="bell-icon nav-asset" aria-hidden="true"></span>
+        <i class="badge" aria-label="1 notification">1</i>
+        <span class="bnav-label">Alerts</span>
+      </button>
+      <button data-view="profile" type="button" id="bnav-profile" aria-label="Profile">
+        <span class="person-icon nav-asset" aria-hidden="true"></span>
+        <span class="bnav-label">Profile</span>
+      </button>
+    </nav>
+  </div><!-- /app-shell -->
+
+  <!-- Floating action button -->
+  <button class="floating-add" id="floatingAdd" type="button" aria-label="Create new post">
+    <span aria-hidden="true">+</span>
+  </button>
+
+  <!-- Composer dialog -->
+  <dialog id="composer" aria-label="Create a new post" aria-modal="true">
+      <section class="composer-form" id="composerForm">
+      <header class="composer-header">
+        <button class="back-button image-button" data-composer-action="cancel" type="button"
+          aria-label="Close dialog"></button>
+        <h2>Create Post</h2>
+        <div></div>
+      </header>
+
+      <div class="composer-body">
+        <label class="field-group">
+          <span class="field-label">Post Title</span>
+          <input id="draftTitle" placeholder="Brief title for your post…" autocomplete="off" />
+        </label>
+
+        <label class="field-group">
+          <span class="field-label">Description</span>
+          <textarea id="draftDescription" placeholder="Provide details about your post…" rows="5"></textarea>
+        </label>
+
+        <label class="field-group">
+          <span class="field-label">Category</span>
+          <select id="draftType">
+            <option value="request">Request</option>
+            <option value="question">Question</option>
+            <option value="item">Item</option>
+            <option value="lost">Lost &amp; Found</option>
+          </select>
+        </label>
+
+        <div class="field-row">
+          <label class="field-group">
+            <span class="field-label">Payment (optional)</span>
+            <input id="draftPayment" placeholder="PHP 0" />
+          </label>
+          <label class="field-group">
+            <span class="field-label">Deadline</span>
+            <input id="draftDeadline" type="date" />
+          </label>
+        </div>
+      </div>
+
+      <footer class="composer-footer">
+        <button class="btn btn-secondary" data-composer-action="cancel" type="button">Cancel</button>
+        <button class="btn btn-primary" id="addDraftPost" type="button">Post</button>
+      </footer>
+      </section>
     </dialog>
 
-    <!-- Scene/image placeholder template -->
-    <template id="sceneTemplate">
-      <div class="scene-placeholder" aria-label="Image placeholder" role="img">
-        <span class="cloud cloud-one"></span>
-        <span class="cloud cloud-two"></span>
-        <span class="cloud cloud-three"></span>
-        <span class="hill hill-one"></span>
-        <span class="hill hill-two"></span>
-      </div>
-    </template>
+  <!-- Scene/image placeholder template -->
+  <template id="sceneTemplate">
+    <div class="scene-placeholder" aria-label="Image placeholder" role="img">
+      <span class="cloud cloud-one"></span>
+      <span class="cloud cloud-two"></span>
+      <span class="cloud cloud-three"></span>
+      <span class="hill hill-one"></span>
+      <span class="hill hill-two"></span>
+    </div>
+  </template>
 
-    <script src="app.js"></script>
-  </body>
+  <script src="app.js"></script>
+</body>
+
 </html>
