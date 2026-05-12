@@ -477,6 +477,9 @@ function renderProfile() {
         <p class="profile-metrics"><img src="assets/5_PROFILE/rating.png" alt="" /> ${currentUser.trust} <b></b> ${currentUser.response}</p>
       </div>
       <p>${currentUser.bio}</p>
+      <div class="profile-actions">
+        <button class="btn btn-secondary profile-logout" data-auth-action="logout" type="button">Sign out</button>
+      </div>
     </section>
     <h1 class="section-title">PROFILE</h1>
     <section class="stacked-list">

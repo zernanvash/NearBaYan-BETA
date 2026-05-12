@@ -14,7 +14,7 @@ We will use two industry-standard free platforms for hackathons:
 2. Click **New +** and select **Web Service**.
 3. Connect your `SikapatalaHackathon` GitHub repository.
 4. Fill out the configuration:
-   - **Branch:** `main` (which contains your beta1 code)
+   - **Branch:** `main`
    - **Build Command:** `npm install`
    - **Start Command:** `npm start`
 5. Scroll down to **Environment Variables** and add your production values:
@@ -34,7 +34,7 @@ The current backend URL is `https://nearbayan-beta.onrender.com`.
 
 The frontend is already configured to call the Render backend.
 
-1. Open `beta1/prototype-frontend/index.html`.
+1. Open `prototype-frontend/index.html`.
 2. Find the meta tag at line 6:
    `<meta name="nearbayan-api-base" content="https://nearbayan-beta.onrender.com" />`
 3. If the backend URL changes later, replace `https://nearbayan-beta.onrender.com` with the new Render URL.
@@ -47,7 +47,7 @@ The frontend is already configured to call the Render backend.
 1. Go to **Vercel.com** and sign in with GitHub.
 2. Click **Add New...** -> **Project**.
 3. Import your `SikapatalaHackathon` GitHub repository.
-4. Click **Edit** next to the Root Directory, and change it to `beta1/prototype-frontend` (or just `prototype-frontend` depending on how your repo is structured).
+4. Click **Edit** next to the Root Directory, and change it to `prototype-frontend`.
 5. Click **Deploy**.
 
 The current frontend URL is `https://near-ba-yan-beta.vercel.app/`. You can open this on any phone or computer anywhere in the world.

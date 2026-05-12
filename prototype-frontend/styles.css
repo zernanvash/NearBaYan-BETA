@@ -893,6 +893,16 @@ textarea {
   font-size: clamp(0.92rem, 2.2vw, 1.05rem);
 }
 
+.profile-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.profile-logout {
+  width: min(100%, 180px);
+}
+
 .history-top {
   display: flex;
   align-items: center;
@@ -949,22 +959,21 @@ body.is-auth .menu-popover {
 
 body.is-auth .app-shell {
   min-height: 100vh;
-  padding: 0;
+  padding: 24px var(--space-page);
 }
 
 body.is-auth .screen-content {
-  width: min(100%, 980px);
-  min-height: 100vh;
-  padding: 0;
+  width: min(100%, 920px);
+  margin: 0 auto;
+  padding-top: 0;
+  padding-bottom: 24px;
 }
 
 .landing-screen {
   display: grid;
-  min-height: 100vh;
-  grid-template-rows: minmax(0, 1fr) auto auto;
-  gap: clamp(18px, 4vw, 30px);
-  padding: clamp(28px, 7vw, 70px) var(--page-pad) clamp(30px, 7vw, 70px);
-  text-align: center;
+  gap: 18px;
+  min-height: calc(100vh - 72px);
+  align-content: center;
 }
 
 .landing-mark {
@@ -1290,6 +1299,90 @@ dialog::backdrop {
 @media (min-width: 760px) {
   .field-row {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+
+  .app-shell {
+    grid-template-columns: 236px minmax(0, 760px) 280px;
+    gap: 22px;
+    align-items: start;
+    max-width: 1340px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  .desktop-rail,
+  .desktop-context {
+    position: sticky;
+    top: 24px;
+    display: grid;
+    gap: 16px;
+  }
+
+  .desktop-rail {
+    min-height: calc(100vh - 48px);
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .main-surface {
+    padding: 0;
+  }
+
+  .app-header {
+    display: none;
+  }
+
+  .search-wrapper {
+    margin-top: 0;
+  }
+
+  .screen-content {
+    padding-top: 18px;
+  }
+
+  body.is-auth .app-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 920px);
+    place-content: center;
+    max-width: none;
+  }
+
+  body.is-auth .desktop-rail {
+    display: none;
+  }
+
+  body.is-auth .main-surface {
+    width: min(100%, 920px);
+  }
+
+  .auth-screen {
+    grid-template-columns: minmax(260px, 0.8fr) minmax(320px, 1fr);
+    align-items: center;
+  }
+
+  .auth-art,
+  .auth-copy {
+    grid-column: 1;
+  }
+
+  .auth-panel {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .brand-lockup,
+  .rail-nav,
+  .rail-status,
+  .context-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: var(--shadow-soft);
   }
 
   .landing-actions,
