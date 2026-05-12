@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="nearbayan-api-base" content="https://nearbayan-beta.onrender.com" />
-    <meta name="description" content="NearBaYan — Bringing bayanihan closer. Post requests, questions, items, and lost-and-found listings in your community." />
-    <title>NearBaYan — Community Help Platform</title>
+    <meta name="description" content="NearBaYan - Bringing bayanihan closer. Post requests, questions, items, and lost-and-found listings in your community." />
+    <title>NearBaYan - Community Help Platform</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -74,11 +74,11 @@
 
         <!-- Search bar -->
         <div class="search-wrapper">
-          <form class="search-bar" role="search">
+          <div class="search-bar" role="search">
             <span class="search-icon asset-icon" aria-hidden="true"></span>
-            <input type="search" placeholder="Search NearBaYan…" aria-label="Search NearBaYan" id="searchInput" />
+            <input type="search" placeholder="Search NearBaYan..." aria-label="Search NearBaYan" id="searchInput" />
             <button class="filter-button image-button" type="button" aria-label="Filter results"></button>
-          </form>
+          </div>
         </div>
 
         <!-- Mobile menu popover -->
@@ -127,9 +127,9 @@
 
     <!-- Composer dialog -->
     <dialog id="composer" aria-label="Create a new post" aria-modal="true">
-      <form method="dialog" class="composer-form" id="composerForm">
+      <section class="composer-form" id="composerForm">
         <header class="composer-header">
-          <button class="back-button image-button" value="cancel" type="submit" aria-label="Close dialog"></button>
+          <button class="back-button image-button" data-composer-action="cancel" type="button" aria-label="Close dialog"></button>
           <h2>Create Post</h2>
           <div></div>
         </header>
@@ -137,12 +137,12 @@
         <div class="composer-body">
           <label class="field-group">
             <span class="field-label">Post Title</span>
-            <input id="draftTitle" placeholder="Brief title for your post…" autocomplete="off" />
+            <input id="draftTitle" placeholder="Brief title for your post..." autocomplete="off" />
           </label>
 
           <label class="field-group">
             <span class="field-label">Description</span>
-            <textarea id="draftDescription" placeholder="Provide details about your post…" rows="5"></textarea>
+            <textarea id="draftDescription" placeholder="Provide details about your post..." rows="5"></textarea>
           </label>
 
           <label class="field-group">
@@ -168,10 +168,10 @@
         </div>
 
         <footer class="composer-footer">
-          <button class="btn btn-secondary" value="cancel" type="submit">Cancel</button>
-          <button class="btn btn-primary" id="addDraftPost" value="default" type="submit">Post</button>
+          <button class="btn btn-secondary" data-composer-action="cancel" type="button">Cancel</button>
+          <button class="btn btn-primary" id="addDraftPost" type="button">Post</button>
         </footer>
-      </form>
+      </section>
     </dialog>
 
     <!-- Scene/image placeholder template -->
