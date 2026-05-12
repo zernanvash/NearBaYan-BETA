@@ -2,9 +2,9 @@ const { MongoMemoryServer } = require("mongodb-memory-server");
 
 async function start() {
   const mongo = await MongoMemoryServer.create();
-  process.env.LOCAL_MONGO_URI = mongo.getUri("nearBaYan");
+  process.env.MONGO_URI = mongo.getUri("nearBaYan");
 
-  console.log(`Using in-memory MongoDB at ${process.env.LOCAL_MONGO_URI}`);
+  console.log(`Using in-memory MongoDB at ${process.env.MONGO_URI}`);
 
   process.once("SIGINT", async () => {
     await mongo.stop();

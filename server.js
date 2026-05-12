@@ -1,5 +1,6 @@
 require("dotenv").config();
 const dns = require("dns");
+dns.setServers(["8.8.8.8"]); // Fix for MongoDB SRV DNS lookup issues on some networks
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -14,27 +15,18 @@ const { sendMessage, markAsRead } = require("./utils/dmLifecycle");
 
 const app = express();
 const server = http.createServer(app);
-const isDevelopment = process.env.NODE_ENV !== "production";
-const localMongoUri = process.env.LOCAL_MONGO_URI || "mongodb://127.0.0.1:27017/nearBaYan";
-const mongoUri = isDevelopment && process.env.USE_REMOTE_MONGO !== "true"
-  ? localMongoUri
-  : process.env.MONGO_URI || localMongoUri;
-
-if (mongoUri.startsWith("mongodb+srv://")) {
-  dns.setServers(["8.8.8.8"]); // Helps MongoDB SRV DNS lookup on some networks.
-}
-
 const allowedOrigins = (process.env.CLIENT_URLS || process.env.CLIENT_URL || "")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
+const isDevelopment = process.env.NODE_ENV !== "production";
 const localOriginPattern = /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/;
 
 function corsOrigin(origin, callback) {
   if (!origin) return callback(null, true);
   if (allowedOrigins.length === 0) return callback(null, true);
   if (allowedOrigins.includes(origin)) return callback(null, true);
-  if (localOriginPattern.test(origin)) return callback(null, true);
+  if (isDevelopment && localOriginPattern.test(origin)) return callback(null, true);
   return callback(new Error("Not allowed by CORS"));
 }
 
@@ -153,9 +145,9 @@ app.use((err, req, res, next) => {
 
 // ─── Database & Start ─────────────────────────────────────────────────────────
 mongoose
-  .connect(mongoUri)
+  .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log(`MongoDB connected: ${mongoUri.includes("@") ? mongoUri.replace(/\/\/.*@/, "//***@") : mongoUri}`);
+    console.log("MongoDB connected.");
     server.listen(process.env.PORT || 5000, () => {
       console.log(`NearBaYan server running on port ${process.env.PORT || 5000}`);
     });

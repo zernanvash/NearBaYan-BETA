@@ -5,7 +5,7 @@ const API_BASE = document
 
 const AUTH_STORAGE_KEY = "nearbayan_session";
 
-let authMode = "landing";
+let authMode = "login";
 let authToken = null;
 let currentUser = {
   id: null,
@@ -169,7 +169,6 @@ function setView(view, force = false) {
 
 function render() {
   document.body.classList.toggle("is-auth", !authToken);
-  document.body.dataset.view = authToken ? activeView : authMode;
   if (!authToken) {
     renderAuth();
     renderDesktopContext();
@@ -233,7 +232,6 @@ function saveSession(token, user) {
 function clearSession() {
   authToken = null;
   localStorage.removeItem(AUTH_STORAGE_KEY);
-  authMode = "landing";
   activeView = "auth";
   render();
 }
@@ -261,17 +259,9 @@ async function apiRequest(path, options = {}) {
   };
   if (authToken) headers.Authorization = `Bearer ${authToken}`;
 
-  let response;
-  try {
-    response = await fetch(`${API_BASE}${path}`, { ...options, headers });
-  } catch {
-    throw new Error(`Cannot reach local API at ${API_BASE}. Start the backend first.`);
-  }
+  const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    const msg = data.message || data.error || data.msg || JSON.stringify(data) || "Request failed.";
-    throw new Error(msg);
-  }
+  if (!response.ok) throw new Error(data.message || "Request failed.");
   return data;
 }
 
@@ -289,76 +279,44 @@ async function hydrateSession() {
 }
 
 function renderAuth() {
-  if (authMode === "landing") {
-    screen.innerHTML = `
-      <section class="landing-screen">
-        <div class="landing-mark">
-          <img src="assets/1_LANDING PAGE/logo.png" alt="NearBaYan" />
-        </div>
-        <p>Bringing bayanihan closer.</p>
-        <div class="landing-actions">
-          <button class="btn btn-primary" data-auth-mode="login" type="button">Sign In</button>
-          <button class="btn btn-outline" data-auth-mode="register" type="button">Create Account</button>
-        </div>
-      </section>
-    `;
-    return;
-  }
-
   const isRegister = authMode === "register";
   screen.innerHTML = `
     <section class="auth-screen">
-      <div class="auth-lockup" aria-hidden="true">
-        <img class="auth-badge" src="assets/1_LANDING PAGE/logo.png" alt="" />
-        <img class="auth-wordmark" src="assets/.LOGO/TEXT.png" alt="" />
+      <div class="auth-art" aria-hidden="true">
+        <img src="assets/1_LANDING PAGE/logo.png" alt="" />
       </div>
-      <form class="auth-panel" id="authForm" action="#" novalidate aria-label="${isRegister ? "Create account" : "Sign in"}">
-        <h1>${isRegister ? "Create an Account" : "Welcome Back!"}</h1>
+      <div class="auth-copy">
+        <span class="eyebrow">NearBaYan Beta</span>
+        <h1>Bring bayanihan closer.</h1>
+        <p>Sign in to test real accounts, nearby posts, messages, and community transactions.</p>
+      </div>
+      <form class="auth-panel" id="authForm">
+        <div class="auth-tabs" role="tablist" aria-label="Authentication">
+          <button class="${!isRegister ? "active" : ""}" data-auth-mode="login" type="button">Sign in</button>
+          <button class="${isRegister ? "active" : ""}" data-auth-mode="register" type="button">Register</button>
+        </div>
         ${isRegister ? `
           <label class="field-group">
-            <span class="field-label">Username</span>
-            <input name="name" autocomplete="name" placeholder="Enter Username" required />
-          </label>
-          <label class="field-group">
-            <span class="field-label">Email</span>
-            <input name="email" type="email" autocomplete="email" placeholder="Enter Email" required />
-          </label>
-        ` : `
-          <label class="field-group">
-            <span class="field-label">Email</span>
-            <input name="email" type="email" autocomplete="email" placeholder="Enter Email" required />
-          </label>
-        `}
-        <label class="field-group password-field">
-          <span class="field-label">Password</span>
-          <span class="password-wrap">
-            <input name="password" type="password" autocomplete="${isRegister ? "new-password" : "current-password"}" placeholder="Enter Password" required minlength="8" />
-            <button data-password-toggle type="button" aria-label="Show password"></button>
-          </span>
-        </label>
-        ${isRegister ? `
-          <label class="field-group password-field">
-            <span class="field-label">Confirm Password</span>
-            <span class="password-wrap">
-              <input name="confirmPassword" type="password" autocomplete="new-password" placeholder="Confirm your Password" required minlength="8" />
-              <button data-password-toggle type="button" aria-label="Show password"></button>
-            </span>
+            <span class="field-label">Name</span>
+            <input name="name" autocomplete="name" required />
           </label>
         ` : ""}
-        <label class="check-row">
-          <input type="checkbox" checked />
-          <span>${isRegister ? `I agree to the <b>Terms &amp; Conditions</b> and <b>Privacy Policy</b>` : "Keep me signed in"}</span>
+        <label class="field-group">
+          <span class="field-label">Email</span>
+          <input name="email" type="email" autocomplete="email" required />
+        </label>
+        ${isRegister ? `
+          <label class="field-group">
+            <span class="field-label">Phone</span>
+            <input name="phone" autocomplete="tel" />
+          </label>
+        ` : ""}
+        <label class="field-group password-field">
+          <span class="field-label">Password</span>
+          <input name="password" type="password" autocomplete="${isRegister ? "new-password" : "current-password"}" required minlength="8" />
         </label>
         <p class="auth-error" id="authError" role="alert"></p>
-        <button class="btn btn-primary auth-submit" data-auth-submit type="button">${isRegister ? "Create account" : "Sign in"}</button>
-        ${!isRegister ? `
-          <button class="forgot-link" type="button">Forgot Password?</button>
-          <div class="or-row"><span></span><em>Or</em><span></span></div>
-          <button class="google-button" type="button"><b>G</b> Continue with Google</button>
-          <p class="switch-copy">Don't have an account? <button data-auth-mode="register" type="button">Sign Up</button></p>
-        ` : `
-          <p class="switch-copy">Already have an account? <button data-auth-mode="login" type="button">Sign In</button></p>
-        `}
+        <button class="btn btn-primary auth-submit" type="submit">${isRegister ? "Create account" : "Sign in"}</button>
       </form>
     </section>
   `;
@@ -368,15 +326,34 @@ function renderHome() {
   const nearby = posts.filter((post) => post.type === "request").length;
   const recentPosts = posts.slice(0, 4);
   screen.innerHTML = `
-    <section class="task-banner">
-      <span aria-hidden="true"></span>
-      <strong>You have 2 tasks in progress</strong>
+    <section class="dashboard-hero">
+      <div>
+        <span class="eyebrow">Near you now</span>
+        <h1>Community help, sorted by what matters nearby.</h1>
+        <p>${nearby + 1} open requests are active around Dagupan and nearby towns.</p>
+      </div>
+      <button type="button" data-view="requests">Check requests</button>
+    </section>
+
+    <section class="insight-grid" aria-label="Today summary">
+      <article>
+        <strong>${posts.filter((post) => post.status === "open").length}</strong>
+        <span>Open posts</span>
+      </article>
+      <article>
+        <strong>2</strong>
+        <span>Tasks active</span>
+      </article>
+      <article>
+        <strong>${currentUser.trust}</strong>
+        <span>Trust score</span>
+      </article>
     </section>
 
     <section class="nearby-card">
       <div>
+        <span class="eyebrow">Map snapshot</span>
         <h2>${nearby + 1} Nearby Requests</h2>
-        <button type="button" data-view="requests">Check Now</button>
       </div>
       <div class="map-placeholder" aria-label="Map placeholder">
         <span></span><span></span><span></span>
@@ -392,8 +369,8 @@ function renderHome() {
 
     <section class="preview-grid">
       ${recentPosts
-      .map((post) => renderCompactCard(post))
-      .join("")}
+        .map((post) => renderCompactCard(post))
+        .join("")}
     </section>
   `;
 }
@@ -404,8 +381,8 @@ function renderItems() {
     <h1 class="section-title">Items</h1>
     <div class="category-tabs item-tabs">
       ${["buy", "rent", "swap", "sell"]
-      .map((name) => `<button class="${activeItemFilter === name ? "active" : ""}" data-item-filter="${name}" type="button">${name[0].toUpperCase() + name.slice(1)}</button>`)
-      .join("")}
+        .map((name) => `<button class="${activeItemFilter === name ? "active" : ""}" data-item-filter="${name}" type="button">${name[0].toUpperCase() + name.slice(1)}</button>`)
+        .join("")}
     </div>
     <section class="stacked-list">
       ${itemPosts.length ? itemPosts.map((post) => renderTallCard(post)).join("") : renderEmptyState("No listings in this category yet.")}
@@ -484,8 +461,8 @@ function renderProfile() {
     <h1 class="section-title">PROFILE</h1>
     <section class="stacked-list">
       ${completed
-      .map(
-        (post) => `
+        .map(
+          (post) => `
           <article class="history-card">
             <div class="history-top"><span class="tag">Completed</span><strong><img src="assets/5_PROFILE/rating.png" alt="" /> ${post.rating || "3.7"}</strong></div>
             <h2>${post.title}</h2>
@@ -493,8 +470,8 @@ function renderProfile() {
             <div class="review-box"><span class="chat-icon small-chat"></span>${post.note || "Reliable and easy to coordinate with"}</div>
           </article>
         `
-      )
-      .join("")}
+        )
+        .join("")}
     </section>
   `;
 }
@@ -504,16 +481,16 @@ function renderMessages() {
     <h1 class="section-title">MESSAGES</h1>
     <section class="stacked-list">
       ${conversations
-      .map(
-        (chat) => `
+        .map(
+          (chat) => `
           <article class="message-row">
             <div class="avatar-dot">${chat.name.slice(0, 1)}</div>
             <div><h2>${chat.name}</h2><p>${chat.text}</p></div>
             <span>${chat.time}</span>
           </article>
         `
-      )
-      .join("")}
+        )
+        .join("")}
     </section>
   `;
 }
@@ -523,16 +500,16 @@ function renderAlerts() {
     <h1 class="section-title">NOTIFICATIONS</h1>
     <section class="stacked-list">
       ${alerts
-      .map(
-        (alert) => `
+        .map(
+          (alert) => `
           <article class="alert-card">
             <strong>${alert.title}</strong>
             <p>${alert.body}</p>
             <span>${alert.time}</span>
           </article>
         `
-      )
-      .join("")}
+        )
+        .join("")}
     </section>
   `;
 }
@@ -563,51 +540,46 @@ function renderDesktopContext() {
   `;
 }
 
-function resetDraftForm() {
-  document.querySelectorAll("#composerForm input, #composerForm textarea").forEach((field) => {
-    field.value = "";
-  });
-  document.querySelectorAll("#composerForm select").forEach((field) => {
-    field.selectedIndex = 0;
-  });
+async function checkHealth() {
+  try {
+    const response = await fetch(`${API_BASE}/health`);
+    const data = await response.json();
+    statusDot.className = "status-dot online";
+    statusText.textContent = "Backend online";
+    statusMeta.textContent = new Date(data.time).toLocaleTimeString();
+  } catch {
+    statusDot.className = "status-dot offline";
+    statusText.textContent = "Backend offline";
+    statusMeta.textContent = "Start port 5000";
+  }
 }
 
-function authFieldValue(panel, name) {
-  const field = panel.elements?.[name] || panel.querySelector(`[name="${name}"]`);
-  return String(field?.value || field?.getAttribute("value") || "").trim();
-}
+document.addEventListener("click", (event) => {
+  const viewButton = event.target.closest("[data-view]");
+  const itemFilter = event.target.closest("[data-item-filter]");
+  const authModeButton = event.target.closest("[data-auth-mode]");
+  const authAction = event.target.closest("[data-auth-action]");
 
-async function submitAuthPanel(panel = document.querySelector("#authForm")) {
-  if (!panel) return;
-
-  const error = panel.querySelector("#authError");
-  const submit = panel.querySelector(".auth-submit");
-  const values = {
-    email: authFieldValue(panel, "email"),
-    password: authFieldValue(panel, "password"),
-  };
-
-  if (authMode === "register") {
-    values.name = authFieldValue(panel, "name");
-    values.confirmPassword = authFieldValue(panel, "confirmPassword");
+  if (viewButton) setView(viewButton.dataset.view);
+  if (authModeButton) {
+    authMode = authModeButton.dataset.authMode;
+    renderAuth();
   }
-
-  if (authMode === "register") {
-    if (!values.name?.trim()) { error.textContent = "Username is required."; return; }
-    if (!values.email?.trim()) { error.textContent = "Email is required."; return; }
-    if (!values.password) { error.textContent = "Password is required."; return; }
-    if (values.password !== values.confirmPassword) {
-      error.textContent = "Passwords do not match.";
-      return;
-    }
-    delete values.confirmPassword;
-  } else {
-    if (!values.email?.trim()) { error.textContent = "Email is required."; return; }
-    if (!values.password) { error.textContent = "Password is required."; return; }
-    // Some backends expect "identifier" instead of "email" — send both
-    values.identifier = values.email;
+  if (authAction?.dataset.authAction === "logout") clearSession();
+  if (itemFilter) {
+    activeItemFilter = itemFilter.dataset.itemFilter;
+    renderItems();
   }
+});
 
+document.addEventListener("submit", async (event) => {
+  if (event.target.id !== "authForm") return;
+  event.preventDefault();
+
+  const form = event.target;
+  const error = form.querySelector("#authError");
+  const submit = form.querySelector(".auth-submit");
+  const values = Object.fromEntries(new FormData(form).entries());
   const path = authMode === "register" ? "/api/v1/auth/register" : "/api/v1/auth/login";
 
   error.textContent = "";
@@ -629,92 +601,11 @@ async function submitAuthPanel(panel = document.querySelector("#authForm")) {
     submit.disabled = false;
     submit.textContent = authMode === "register" ? "Create account" : "Sign in";
   }
-}
-
-async function checkHealth() {
-  const apiUrl = new URL(API_BASE, window.location.href);
-  if (apiUrl.origin !== window.location.origin) {
-    statusDot.className = "status-dot online";
-    statusText.textContent = "Backend configured";
-    statusMeta.textContent = apiUrl.host;
-    return;
-  }
-
-  try {
-    const response = await fetch(`${API_BASE}/health`);
-    const data = await response.json();
-    statusDot.className = "status-dot online";
-    statusText.textContent = "Backend online";
-    statusMeta.textContent = new Date(data.time).toLocaleTimeString();
-  } catch {
-    statusDot.className = "status-dot offline";
-    statusText.textContent = "Backend offline";
-    statusMeta.textContent = "Start port 5000";
-  }
-}
-
-document.addEventListener("click", (event) => {
-  const formControl = event.target.closest("input, textarea, select, label");
-  if (formControl && !event.target.closest("[data-auth-submit], [data-auth-mode], [data-password-toggle], [data-composer-action], [data-item-filter], [data-view], [data-auth-action]")) {
-    return;
-  }
-
-  const viewButton = event.target.closest("[data-view]");
-  const itemFilter = event.target.closest("[data-item-filter]");
-  const authModeButton = event.target.closest("[data-auth-mode]");
-  const authAction = event.target.closest("[data-auth-action]");
-  const composerAction = event.target.closest("[data-composer-action]");
-  const passwordToggle = event.target.closest("[data-password-toggle]");
-  const authSubmit = event.target.closest("[data-auth-submit]");
-
-  if (viewButton) setView(viewButton.dataset.view);
-  if (composerAction?.dataset.composerAction === "cancel") composer.close();
-  if (passwordToggle) {
-    const input = passwordToggle.closest(".password-wrap")?.querySelector("input");
-    if (input) {
-      const willShow = input.type === "password";
-      input.type = willShow ? "text" : "password";
-      passwordToggle.setAttribute("aria-label", willShow ? "Hide password" : "Show password");
-    }
-  }
-  if (authSubmit) {
-    event.preventDefault();
-    submitAuthPanel(authSubmit.closest("#authForm"));
-  }
-  if (authModeButton) {
-    if (authMode === authModeButton.dataset.authMode) return;
-    authMode = authModeButton.dataset.authMode;
-    renderAuth();
-  }
-  if (authAction?.dataset.authAction === "logout") clearSession();
-  if (itemFilter) {
-    activeItemFilter = itemFilter.dataset.itemFilter;
-    renderItems();
-  }
 });
-
-document.addEventListener("keydown", (event) => {
-  if (event.key !== "Enter") return;
-  const panel = event.target.closest("#authForm");
-  if (!panel) return;
-  event.preventDefault();
-  submitAuthPanel(panel);
-});
-
-document.addEventListener("submit", (event) => {
-  if (event.target.id === "authForm") {
-    event.preventDefault();
-    submitAuthPanel(event.target);
-    return;
-  }
-
-  event.preventDefault();
-}, true);
 
 menuButton.addEventListener("click", toggleMenu);
 document.querySelector("#floatingAdd").addEventListener("click", () => composer.showModal());
-document.querySelector("#addDraftPost").addEventListener("click", async (event) => {
-  event.preventDefault();
+document.querySelector("#addDraftPost").addEventListener("click", async () => {
   const type = document.querySelector("#draftType").value;
   const title = document.querySelector("#draftTitle").value || "Untitled Request";
   const description = document.querySelector("#draftDescription").value || "New community post";
@@ -794,8 +685,6 @@ document.querySelector("#addDraftPost").addEventListener("click", async (event) 
   }
 
   posts.unshift(localPost);
-  composer.close();
-  resetDraftForm();
   setView(type === "request" ? "requests" : type === "question" ? "questions" : type === "item" ? "items" : "lost", true);
 });
 
