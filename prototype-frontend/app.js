@@ -232,6 +232,7 @@ function saveSession(token, user) {
 function clearSession() {
   authToken = null;
   localStorage.removeItem(AUTH_STORAGE_KEY);
+  authMode = "login";
   activeView = "auth";
   render();
 }
@@ -282,41 +283,62 @@ function renderAuth() {
   const isRegister = authMode === "register";
   screen.innerHTML = `
     <section class="auth-screen">
-      <div class="auth-art" aria-hidden="true">
-        <img src="assets/1_LANDING PAGE/logo.png" alt="" />
-      </div>
-      <div class="auth-copy">
-        <span class="eyebrow">NearBaYan Beta</span>
-        <h1>Bring bayanihan closer.</h1>
-        <p>Sign in to test real accounts, nearby posts, messages, and community transactions.</p>
+      <div class="auth-lockup" aria-hidden="true">
+        <img class="auth-badge" src="assets/1_LANDING PAGE/logo.png" alt="" />
+        <img class="auth-wordmark" src="assets/.LOGO/TEXT.png" alt="" />
       </div>
       <form class="auth-panel" id="authForm">
         <div class="auth-tabs" role="tablist" aria-label="Authentication">
           <button class="${!isRegister ? "active" : ""}" data-auth-mode="login" type="button">Sign in</button>
           <button class="${isRegister ? "active" : ""}" data-auth-mode="register" type="button">Register</button>
         </div>
+        <h1>${isRegister ? "Create an Account" : "Welcome Back!"}</h1>
         ${isRegister ? `
           <label class="field-group">
-            <span class="field-label">Name</span>
-            <input name="name" autocomplete="name" required />
+            <span class="field-label">Username</span>
+            <input name="name" autocomplete="name" placeholder="Enter Username" required />
           </label>
         ` : ""}
         <label class="field-group">
           <span class="field-label">Email</span>
-          <input name="email" type="email" autocomplete="email" required />
+          <input name="email" type="email" autocomplete="email" placeholder="Enter Email" required />
         </label>
         ${isRegister ? `
           <label class="field-group">
             <span class="field-label">Phone</span>
-            <input name="phone" autocomplete="tel" />
+            <input name="phone" autocomplete="tel" placeholder="Optional phone number" />
           </label>
         ` : ""}
         <label class="field-group password-field">
           <span class="field-label">Password</span>
-          <input name="password" type="password" autocomplete="${isRegister ? "new-password" : "current-password"}" required minlength="8" />
+          <span class="password-wrap">
+            <input name="password" type="password" autocomplete="${isRegister ? "new-password" : "current-password"}" placeholder="Enter Password" required minlength="8" />
+            <button data-password-toggle type="button" aria-label="Show password"></button>
+          </span>
+        </label>
+        ${isRegister ? `
+          <label class="field-group password-field">
+            <span class="field-label">Confirm Password</span>
+            <span class="password-wrap">
+              <input name="confirmPassword" type="password" autocomplete="new-password" placeholder="Confirm your Password" required minlength="8" />
+              <button data-password-toggle type="button" aria-label="Show password"></button>
+            </span>
+          </label>
+        ` : ""}
+        <label class="check-row">
+          <input type="checkbox" checked />
+          <span>${isRegister ? `I agree to the <b>Terms &amp; Conditions</b> and <b>Privacy Policy</b>` : "Keep me signed in"}</span>
         </label>
         <p class="auth-error" id="authError" role="alert"></p>
         <button class="btn btn-primary auth-submit" type="submit">${isRegister ? "Create account" : "Sign in"}</button>
+        ${!isRegister ? `
+          <button class="forgot-link" data-auth-action="forgot" type="button">Forgot Password?</button>
+          <div class="or-row"><span></span><em>Or</em><span></span></div>
+          <button class="google-button" data-auth-action="google" type="button"><b>G</b> Continue with Google</button>
+          <p class="switch-copy">Don't have an account? <button data-auth-mode="register" type="button">Sign Up</button></p>
+        ` : `
+          <p class="switch-copy">Already have an account? <button data-auth-mode="login" type="button">Sign In</button></p>
+        `}
       </form>
     </section>
   `;
@@ -326,34 +348,15 @@ function renderHome() {
   const nearby = posts.filter((post) => post.type === "request").length;
   const recentPosts = posts.slice(0, 4);
   screen.innerHTML = `
-    <section class="dashboard-hero">
-      <div>
-        <span class="eyebrow">Near you now</span>
-        <h1>Community help, sorted by what matters nearby.</h1>
-        <p>${nearby + 1} open requests are active around Dagupan and nearby towns.</p>
-      </div>
-      <button type="button" data-view="requests">Check requests</button>
-    </section>
-
-    <section class="insight-grid" aria-label="Today summary">
-      <article>
-        <strong>${posts.filter((post) => post.status === "open").length}</strong>
-        <span>Open posts</span>
-      </article>
-      <article>
-        <strong>2</strong>
-        <span>Tasks active</span>
-      </article>
-      <article>
-        <strong>${currentUser.trust}</strong>
-        <span>Trust score</span>
-      </article>
+    <section class="task-banner">
+      <span aria-hidden="true"></span>
+      <strong>You have 2 tasks in progress</strong>
     </section>
 
     <section class="nearby-card">
       <div>
-        <span class="eyebrow">Map snapshot</span>
         <h2>${nearby + 1} Nearby Requests</h2>
+        <button type="button" data-view="requests">Check Now</button>
       </div>
       <div class="map-placeholder" aria-label="Map placeholder">
         <span></span><span></span><span></span>
@@ -405,7 +408,7 @@ function renderCompactCard(post) {
       ${sceneMarkup()}
       <span class="tag">${labelFor(post.type)}</span>
       <h3>${post.title}</h3>
-      <p class="post-meta">${post.author || "NearBaYan"} · ${post.posted || "Just now"}</p>
+      <p class="post-meta">${post.author || "NearBaYan"} - ${post.posted || "Just now"}</p>
       <p class="location">${post.location}</p>
     </article>
   `;
@@ -419,7 +422,7 @@ function renderTallCard(post, variant = "image") {
         <span class="avatar-dot">${initialsFor(author)}</span>
         <div>
           <strong>${author}</strong>
-          <span>${post.posted || "Just now"} · ${post.location}</span>
+          <span>${post.posted || "Just now"} - ${post.location}</span>
         </div>
         <span class="tag">${labelFor(post.type)}</span>
       </header>
@@ -428,10 +431,10 @@ function renderTallCard(post, variant = "image") {
       ${variant === "text" ? `<p class="summary">${post.summary}</p>` : sceneMarkup()}
       <footer>
         <div class="action-group">
-          <button class="chip-action" type="button">${post.action}</button>
+          <button class="chip-action" data-post-action="${post.id}" type="button">${post.action}</button>
           ${post.payment ? `<span class="payment-chip">${post.payment}</span>` : ""}
         </div>
-        <button class="comment-button" type="button" aria-label="Open comments"></button>
+        <button class="comment-button" data-view="messages" type="button" aria-label="Open comments"></button>
       </footer>
     </article>
   `;
@@ -559,27 +562,74 @@ document.addEventListener("click", (event) => {
   const itemFilter = event.target.closest("[data-item-filter]");
   const authModeButton = event.target.closest("[data-auth-mode]");
   const authAction = event.target.closest("[data-auth-action]");
+  const passwordToggle = event.target.closest("[data-password-toggle]");
+  const composerAction = event.target.closest("[data-composer-action]");
+  const postAction = event.target.closest("[data-post-action]");
 
   if (viewButton) setView(viewButton.dataset.view);
+  if (composerAction?.dataset.composerAction === "cancel") composer.close();
+  if (passwordToggle) {
+    const input = passwordToggle.closest(".password-wrap")?.querySelector("input");
+    if (input) {
+      const willShow = input.type === "password";
+      input.type = willShow ? "text" : "password";
+      passwordToggle.setAttribute("aria-label", willShow ? "Hide password" : "Show password");
+    }
+  }
   if (authModeButton) {
     authMode = authModeButton.dataset.authMode;
     renderAuth();
   }
   if (authAction?.dataset.authAction === "logout") clearSession();
+  if (authAction?.dataset.authAction === "forgot") {
+    const error = document.querySelector("#authError");
+    if (error) error.textContent = "Password reset is not connected yet. Please use email and password for now.";
+  }
+  if (authAction?.dataset.authAction === "google") {
+    const error = document.querySelector("#authError");
+    if (error) error.textContent = "Google sign-in is not connected yet. Please use email and password for now.";
+  }
   if (itemFilter) {
     activeItemFilter = itemFilter.dataset.itemFilter;
     renderItems();
   }
+  if (postAction) {
+    const post = posts.find((item) => item.id === postAction.dataset.postAction);
+    if (post) {
+      alerts.unshift({
+        title: `${post.action} selected`,
+        body: `${post.title} was added to your activity queue.`,
+        time: "Now",
+      });
+      setView("alerts");
+    }
+  }
 });
 
 document.addEventListener("submit", async (event) => {
+  if (event.target.classList.contains("search-bar")) {
+    event.preventDefault();
+    return;
+  }
+
   if (event.target.id !== "authForm") return;
   event.preventDefault();
 
   const form = event.target;
   const error = form.querySelector("#authError");
   const submit = form.querySelector(".auth-submit");
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
   const values = Object.fromEntries(new FormData(form).entries());
+  if (authMode === "register") {
+    if (values.password !== values.confirmPassword) {
+      error.textContent = "Passwords do not match.";
+      return;
+    }
+    delete values.confirmPassword;
+  }
   const path = authMode === "register" ? "/api/v1/auth/register" : "/api/v1/auth/login";
 
   error.textContent = "";
@@ -605,7 +655,8 @@ document.addEventListener("submit", async (event) => {
 
 menuButton.addEventListener("click", toggleMenu);
 document.querySelector("#floatingAdd").addEventListener("click", () => composer.showModal());
-document.querySelector("#addDraftPost").addEventListener("click", async () => {
+document.querySelector("#addDraftPost").addEventListener("click", async (event) => {
+  event.preventDefault();
   const type = document.querySelector("#draftType").value;
   const title = document.querySelector("#draftTitle").value || "Untitled Request";
   const description = document.querySelector("#draftDescription").value || "New community post";
@@ -685,6 +736,7 @@ document.querySelector("#addDraftPost").addEventListener("click", async () => {
   }
 
   posts.unshift(localPost);
+  composer.close();
   setView(type === "request" ? "requests" : type === "question" ? "questions" : type === "item" ? "items" : "lost", true);
 });
 
